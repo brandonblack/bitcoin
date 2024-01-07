@@ -1393,6 +1393,19 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 }
                 break;
 
+                case OP_INTERNALKEY: {
+                    // OP_INTERNALKEY is only available in Tapscript
+                    if (sigversion == SigVersion::BASE || sigversion == SigVersion::WITNESS_V0) return set_error(serror, SCRIPT_ERR_BAD_OPCODE);
+                    if (flags & SCRIPT_VERIFY_DISCOURAGE_LNHANCE) {
+                        return set_error(serror, SCRIPT_ERR_DISCOURAGE_OP_SUCCESS);
+                    }
+
+                    // Always present in Tapscript
+                    assert(execdata.m_internal_key);
+                    stack.emplace_back(execdata.m_internal_key->begin(), execdata.m_internal_key->end());
+                    break;
+                }
+
                 default:
                     return set_error(serror, SCRIPT_ERR_BAD_OPCODE);
             }
@@ -2272,6 +2285,7 @@ static bool ExecuteWitnessScript(const Span<const valtype>& stack_span, const CS
     std::vector<valtype> stack{stack_span.begin(), stack_span.end()};
 
     const bool is_vault_active = (flags & SCRIPT_VERIFY_VAULT);
+    const bool is_lnhance_active = (flags & SCRIPT_VERIFY_LNHANCE);
 
     if (sigversion == SigVersion::TAPSCRIPT) {
         // OP_SUCCESSx processing overrides everything, including stack element size limits
@@ -2283,7 +2297,8 @@ static bool ExecuteWitnessScript(const Span<const valtype>& stack_span, const CS
                 return set_error(serror, SCRIPT_ERR_BAD_OPCODE);
             }
             // New opcodes will be listed here. May use a different sigversion to modify existing opcodes.
-            if (is_vault_active && (opcode == OP_VAULT || opcode == OP_VAULT_RECOVER)) {
+            if ((is_lnhance_active && (opcode == OP_INTERNALKEY))
+                || (is_vault_active && (opcode == OP_VAULT || opcode == OP_VAULT_RECOVER))) {
                 continue;
             } else if (IsOpSuccess(opcode)) {
                 if (flags & SCRIPT_VERIFY_DISCOURAGE_OP_SUCCESS) {

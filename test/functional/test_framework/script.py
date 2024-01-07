@@ -260,6 +260,7 @@ OP_INVALIDOPCODE = CScriptOp(0xff)
 
 OP_VAULT = CScriptOp(0xbb)
 OP_VAULT_RECOVER = CScriptOp(0xbc)
+OP_INTERNALKEY = CScriptOp(0xcb)
 
 OPCODE_NAMES.update({
     OP_0: 'OP_0',
@@ -376,6 +377,7 @@ OPCODE_NAMES.update({
     OP_CHECKSIGADD: 'OP_CHECKSIGADD',
     OP_VAULT: 'OP_VAULT',
     OP_VAULT_RECOVER: 'OP_VAULT_RECOVER',
+    OP_INTERNALKEY: 'OP_INTERNALKEY',
     OP_INVALIDOPCODE: 'OP_INVALIDOPCODE',
 })
 
@@ -970,6 +972,7 @@ def is_op_success(o):
 op_success_overrides = {
     OP_VAULT,
     OP_VAULT_RECOVER,
+    OP_INTERNALKEY,
 }
 
 
