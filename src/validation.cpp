@@ -1009,9 +1009,13 @@ bool MemPoolAccept::PolicyScriptChecks(const ATMPArgs& args, Workspace& ws)
 
     const bool ctv_active = DeploymentActiveAfter(m_active_chainstate.m_chain.Tip(), m_active_chainstate.m_chainman, Consensus::DEPLOYMENT_CHECKTEMPLATEVERIFY);
     const bool apo_active = DeploymentActiveAfter(m_active_chainstate.m_chain.Tip(), m_active_chainstate.m_chainman, Consensus::DEPLOYMENT_ANYPREVOUT);
+    const bool checksigfromstack_active = DeploymentActiveAfter(m_active_chainstate.m_chain.Tip(), m_active_chainstate.m_chainman, Consensus::DEPLOYMENT_CHECKSIGFROMSTACK);
+    const bool internalkey_active = DeploymentActiveAfter(m_active_chainstate.m_chain.Tip(), m_active_chainstate.m_chainman, Consensus::DEPLOYMENT_INTERNALKEY);
     const unsigned int scriptVerifyFlags = STANDARD_SCRIPT_VERIFY_FLAGS
         | (ctv_active ? SCRIPT_VERIFY_NONE : SCRIPT_VERIFY_DISCOURAGE_CHECK_TEMPLATE_VERIFY_HASH)
-        | (apo_active ? SCRIPT_VERIFY_NONE : SCRIPT_VERIFY_DISCOURAGE_ANYPREVOUT);
+        | (apo_active ? SCRIPT_VERIFY_NONE : SCRIPT_VERIFY_DISCOURAGE_ANYPREVOUT)
+        | (checksigfromstack_active ? SCRIPT_VERIFY_NONE : SCRIPT_VERIFY_DISCOURAGE_CHECKSIGFROMSTACK)
+        | (internalkey_active ? SCRIPT_VERIFY_NONE : SCRIPT_VERIFY_DISCOURAGE_INTERNALKEY);
 
     // Check input scripts and signatures.
     // This is done last to help prevent CPU exhaustion denial-of-service attacks.
@@ -2015,6 +2019,16 @@ unsigned int GetBlockScriptFlags(const CBlockIndex& block_index, const Chainstat
     // Enforce ANYPREVOUT (BIP118)
     if ((flags & SCRIPT_VERIFY_TAPROOT) && DeploymentActiveAt(block_index, chainman, Consensus::DEPLOYMENT_ANYPREVOUT)) {
         flags |= SCRIPT_VERIFY_ANYPREVOUT;
+    }
+
+    // Enforce CHECKSIGFROMSTACK(VERIFY) (BIN-2024-0003)
+    if (DeploymentActiveAt(block_index, chainman, Consensus::DEPLOYMENT_CHECKSIGFROMSTACK)) {
+        flags |= SCRIPT_VERIFY_CHECKSIGFROMSTACK;
+    }
+
+    // Process INTERNALKEY (BIN-2024-0004)
+    if (DeploymentActiveAt(block_index, chainman, Consensus::DEPLOYMENT_INTERNALKEY)) {
+        flags |= SCRIPT_VERIFY_INTERNALKEY;
     }
 
     return flags;

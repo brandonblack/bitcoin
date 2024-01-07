@@ -197,7 +197,7 @@ class BlockchainTest(BitcoinTestFramework):
         assert_equal(gdi_result, {
           "hash": blockhash,
           "height": height,
-          "script_flags": "ANYPREVOUT,CHECKLOCKTIMEVERIFY,CHECKSEQUENCEVERIFY,DEFAULT_CHECK_TEMPLATE_VERIFY_HASH,DERSIG,NULLDUMMY,P2SH,TAPROOT,WITNESS",
+          "script_flags": "ANYPREVOUT,CHECKLOCKTIMEVERIFY,CHECKSEQUENCEVERIFY,DEFAULT_CHECK_TEMPLATE_VERIFY_HASH,DERSIG,LNHANCE,NULLDUMMY,P2SH,TAPROOT,WITNESS",
           "deployments": {
             'bip34': {'type': 'buried', 'active': True, 'height': 2},
             'bip66': {'type': 'buried', 'active': True, 'height': 3},
@@ -240,6 +240,38 @@ class BlockchainTest(BitcoinTestFramework):
                 'heretical': {
                     'bip': 118,
                     'bip_version': 0,
+                    'start_time': -1,
+                    'timeout': 0x7fffffffffffffff,  # testdummy does not have a timeout so is set to the max int64 value
+                    'period': 144,
+                    'status': 'active',
+                    'status_next': 'active',
+                    'since': 0,
+                },
+                'active': True,
+                'height': 0,
+            },
+            'checksigfromstack': {
+                'type': 'heretical',
+                'heretical': {
+                    'year': 2024,
+                    'number': 3,
+                    'revision': 1,
+                    'start_time': -1,
+                    'timeout': 0x7fffffffffffffff,  # testdummy does not have a timeout so is set to the max int64 value
+                    'period': 144,
+                    'status': 'active',
+                    'status_next': 'active',
+                    'since': 0,
+                },
+                'active': True,
+                'height': 0,
+            },
+            'internalkey': {
+                'type': 'heretical',
+                'heretical': {
+                    'year': 2024,
+                    'number': 4,
+                    'revision': 1,
                     'start_time': -1,
                     'timeout': 0x7fffffffffffffff,  # testdummy does not have a timeout so is set to the max int64 value
                     'period': 144,
