@@ -137,6 +137,11 @@ public:
 
         consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000063c4ebd298db40af57541800");
         consensus.defaultAssumeValid = uint256S("0x000000000000000000026811d149d4d261995ec5b3f64f439a0a10e1a464af9a"); // 824000
+        consensus.vDeployments[Consensus::DEPLOYMENT_CHECKSIGFROMSTACK] = SetupDeployment{.year = 2024, .number = 3, .revision = 1, .never = true};
+        consensus.vDeployments[Consensus::DEPLOYMENT_INTERNALKEY] = SetupDeployment{.year = 2024, .number = 4, .revision = 1, .never = true};
+
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000044a50fe819c39ad624021859");
+        consensus.defaultAssumeValid = uint256S("0x000000000000000000035c3f0d31e71a5ee24c5aaf3354689f65bd7b07dee632"); // 784000
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -250,6 +255,11 @@ public:
 
         consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000c59b14e264ba6c15db9");
         consensus.defaultAssumeValid = uint256S("0x000000000001323071f38f21ea5aae529ece491eadaccce506a59bcc2d968917"); // 2550000
+        consensus.vDeployments[Consensus::DEPLOYMENT_CHECKSIGFROMSTACK] = SetupDeployment{.year = 2024, .number = 3, .revision = 1, .never = true};
+        consensus.vDeployments[Consensus::DEPLOYMENT_INTERNALKEY] = SetupDeployment{.year = 2024, .number = 4, .revision = 1, .never = true};
+
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000977edb0244170858d07");
+        consensus.defaultAssumeValid = uint256S("0x0000000000000021bc50a89cde4870d4a81ffe0153b3c8de77b435a2fd3f6761"); // 2429000
 
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
@@ -397,6 +407,20 @@ public:
             .activate = 0x62000100,
             .abandon = 0x42000100,
         };
+        consensus.vDeployments[Consensus::DEPLOYMENT_CHECKSIGFROMSTACK] = SetupDeployment{
+            .year = 2024,
+            .number = 3,
+            .revision = 1,
+            .start = 1705046400, // 2024-01-12
+            .timeout = 2020665600, // 2034-01-12
+        };
+        consensus.vDeployments[Consensus::DEPLOYMENT_INTERNALKEY] = SetupDeployment{
+            .year = 2024,
+            .number = 4,
+            .revision = 1,
+            .start = 1705046400, // 2024-01-12
+            .timeout = 2020665600, // 2034-01-12
+        };
 
         RenounceDeployments(options.renounce, consensus.vDeployments);
 
@@ -472,6 +496,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_CHECKTEMPLATEVERIFY] = SetupDeployment{.activate = 0x60007700, .abandon = 0x40007700, .always = true};
         consensus.vDeployments[Consensus::DEPLOYMENT_ANYPREVOUT] = SetupDeployment{.activate = 0x60007600, .abandon = 0x40007600, .always = true};
         consensus.vDeployments[Consensus::DEPLOYMENT_OP_CAT] = SetupDeployment{.activate = 0x62000100, .abandon = 0x42000100, .always = true};
+
+        consensus.vDeployments[Consensus::DEPLOYMENT_CHECKSIGFROMSTACK] = SetupDeployment{.year = 2024, .number = 3, .revision = 1, .always = true};
+        consensus.vDeployments[Consensus::DEPLOYMENT_INTERNALKEY] = SetupDeployment{.year = 2024, .number = 4, .revision = 1, .always = true};
+
         consensus.nMinimumChainWork = uint256{};
         consensus.defaultAssumeValid = uint256{};
 
