@@ -158,6 +158,12 @@ enum : uint32_t {
     // Making ANYPREVOUT public key versions (in BIP 342 scripts) non-standard
     SCRIPT_VERIFY_DISCOURAGE_ANYPREVOUT = (1U << 25),
 
+    // Executing OP_INTERNALKEY
+    SCRIPT_VERIFY_INTERNALKEY = (1U << 26),
+
+    // Making OP_INTERNALKEY non-standard
+    SCRIPT_VERIFY_DISCOURAGE_INTERNALKEY = (1U << 27),
+
     // Constants to point to the highest flag in use. Add new flags above this line.
     //
     SCRIPT_VERIFY_END_MARKER
