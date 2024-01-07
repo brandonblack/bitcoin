@@ -33,6 +33,7 @@ enum DeploymentPos : uint16_t {
     DEPLOYMENT_TESTDUMMY,
     DEPLOYMENT_TAPROOT, // Deployment of Schnorr/Taproot (BIPs 340-342)
     DEPLOYMENT_COVTOOLS, // Deployment of CHECKTEMPLATEVERIFY, ANYPREVOUT, OP_VAULT (BIP xxx)
+    DEPLOYMENT_LNHANCE, // Deployment of CHECKSIGFROMSTACK(VERIFY), OP_INTERNALKEY
     // NOTE: Also add new deployments to VersionBitsDeploymentInfo in deploymentinfo.cpp
     MAX_VERSION_BITS_DEPLOYMENTS
 };

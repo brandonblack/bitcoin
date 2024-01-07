@@ -23,6 +23,10 @@ const struct VBDeploymentInfo VersionBitsDeploymentInfo[Consensus::MAX_VERSION_B
         /*.name =*/ "covtools",
         /*.gbt_force =*/ true,
     },
+    {
+        /*.name =*/ "lnhance",
+        /*.gbt_force =*/ true,
+    },
 };
 
 std::string DeploymentName(Consensus::BuriedDeployment dep)
@@ -90,6 +94,8 @@ const std::map<std::string, uint32_t> g_verify_flag_names{
     FLAG_NAME(VAULT)
     FLAG_NAME(VAULT_REPLACEABLE_RECOVERY)
     FLAG_NAME(VAULT_UNAUTH_RECOVERY_STRUCTURE)
+    FLAG_NAME(LNHANCE)
+    FLAG_NAME(DISCOURAGE_LNHANCE)
 };
 #undef FLAG_NAME
 

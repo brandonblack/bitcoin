@@ -1037,8 +1037,10 @@ bool MemPoolAccept::PolicyScriptChecks(const ATMPArgs& args, Workspace& ws)
     const auto DISCOURAGE_COVTOOLS = (
             SCRIPT_VERIFY_DISCOURAGE_CHECKTEMPLATEVERIFY |
             SCRIPT_VERIFY_DISCOURAGE_ANYPREVOUT);
+    const bool lnhance_active = DeploymentActiveAfter(m_active_chainstate.m_chain.Tip(), m_active_chainstate.m_chainman, Consensus::DEPLOYMENT_LNHANCE);
     const unsigned int scriptVerifyFlags = STANDARD_SCRIPT_VERIFY_FLAGS |
-        (covtools_active ? SCRIPT_VERIFY_NONE : DISCOURAGE_COVTOOLS);
+        (covtools_active ? SCRIPT_VERIFY_NONE : DISCOURAGE_COVTOOLS) |
+        (lnhance_active ? SCRIPT_VERIFY_NONE : SCRIPT_VERIFY_DISCOURAGE_LNHANCE);
 
     // Check input scripts and signatures.
     // This is done last to help prevent CPU exhaustion denial-of-service attacks.
@@ -2226,6 +2228,11 @@ static unsigned int GetBlockScriptFlags(const CBlockIndex& block_index, const Ch
         flags |= SCRIPT_VERIFY_CHECKTEMPLATEVERIFY;
         flags |= SCRIPT_VERIFY_ANYPREVOUT;
         flags |= SCRIPT_VERIFY_VAULT;
+    }
+
+    // Enforce csfs/internalkey
+    if (DeploymentActiveAt(block_index, chainman, Consensus::DEPLOYMENT_LNHANCE)) {
+        flags |= SCRIPT_VERIFY_LNHANCE;
     }
 
     // Enforce BIP147 NULLDUMMY (activated simultaneously with segwit)
