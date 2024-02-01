@@ -1329,13 +1329,33 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                         return set_error(serror, SCRIPT_ERR_BAD_OPCODE);
                     }
 
-                    // sig message pubkey
+                    // at least 3 - sig message pubkey or sig d_nExtra ... d1 m0 pubkey nExtra
                     if (stack.size() < 3)
                         return set_error(serror, SCRIPT_ERR_INVALID_STACK_OPERATION);
 
-                    const valtype& vchSigIn = stacktop(-3);
-                    const valtype& vchMsg = stacktop(-2);
-                    const valtype& vchPubKey = stacktop(-1);
+                    uint8_t nExtra = 0;
+                    valtype msg;
+                    const valtype& vchTop = stacktop(-1);
+                    if (vchTop.size() == 1) {
+                        const CScriptNum topNum(vchTop, fRequireMinimal);
+                        if (topNum >= 1 && topNum <= 16) {
+                            nExtra = topNum.getint();
+                            if (stack.size() < 4 + nExtra)
+                                return set_error(serror, SCRIPT_ERR_INVALID_STACK_OPERATION);
+
+                            msg.reserve(32 + 32 * nExtra);
+                            for (int i = 0; i <= nExtra; i++) {
+                                const valtype& di = stacktop(-(3 + i));
+                                // Hashed values limits message to 17*32 = 544 bytes (nearly equal to the stack element
+                                // size limit) and prevents vector CSFS from committing to arbitrary concatenations.
+                                const uint256 mi = (CHashWriter(SER_GETHASH, 0) << di).GetSHA256();
+                                msg.insert(std::end(msg), std::begin(mi), std::end(mi));
+                            }
+                        }
+                    }
+                    const valtype& vchSigIn = nExtra == 0 ? stacktop(-3) : stacktop(-(4 + nExtra));
+                    const valtype& vchMsg = nExtra == 0 ? stacktop(-2) : msg;
+                    const valtype& vchPubKey = nExtra == 0 ? vchTop : stacktop(-2);
 
                     bool fSuccess = true;
                     if (!EvalChecksigFromStack(vchSigIn, vchMsg, vchPubKey, execdata, flags, sigversion, serror, fSuccess)) return false;
@@ -1345,6 +1365,8 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                         break;
                     }
 
+                    for (int i = 1; i <= nExtra; i++)
+                        popstack(stack);
                     popstack(stack);
                     popstack(stack);
                     popstack(stack);
