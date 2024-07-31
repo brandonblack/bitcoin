@@ -274,6 +274,9 @@ public:
      *  Merkle root, and parity. */
     bool CheckTapTweak(const XOnlyPubKey& internal, const uint256& merkle_root, bool parity) const;
 
+    /** Add the specified tweak to this xonly pubkey. */
+    std::optional<std::pair<XOnlyPubKey, bool>> TweakAdd(const uint256& tweak) const;
+
     /** Construct a Taproot tweaked output point with this point as internal key. */
     std::optional<std::pair<XOnlyPubKey, bool>> CreateTapTweak(const uint256* merkle_root) const;
 

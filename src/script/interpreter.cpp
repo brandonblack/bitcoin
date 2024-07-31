@@ -1213,6 +1213,25 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 }
                 break;
 
+                case OP_TWEAKADD:
+                {
+                    // pubkey tweak -- tweaked_pubkey parity(0|1)
+                    if (stack.size() < 2)
+                        return set_error(serror, SCRIPT_ERR_INVALID_STACK_OPERATION);
+
+                    const valtype& pubkey = stacktop(-2);
+                    const valtype& tweak = stacktop(-1);
+                    const XOnlyPubKey p{Span{pubkey}};
+                    const std::optional<std::pair<XOnlyPubKey, bool>> ret = p.TweakAdd(uint256(tweak));
+                    if (!ret.has_value())
+                        return set_error(serror, SCRIPT_ERR_UNKNOWN_ERROR);
+                    popstack(stack);
+                    popstack(stack);
+                    stack.emplace_back(ret.value().first.begin(), ret.value().first.end());
+                    stack.push_back(ret.value().second ? vchTrue : vchFalse);
+                }
+                break;
+
                 default:
                     return set_error(serror, SCRIPT_ERR_BAD_OPCODE);
             }
